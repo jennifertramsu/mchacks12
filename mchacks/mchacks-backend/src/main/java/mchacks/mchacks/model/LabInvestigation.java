@@ -2,10 +2,9 @@
 /*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
 
-import java.util.*;
 
-// line 42 "model.ump"
-// line 75 "model.ump"
+// line 33 "model.ump"
+// line 64 "model.ump"
 public class LabInvestigation extends Investigation
 {
 
@@ -17,9 +16,9 @@ public class LabInvestigation extends Investigation
   // CONSTRUCTOR
   //------------------------
 
-  public LabInvestigation()
+  public LabInvestigation(String aStatus, Patient aPatient)
   {
-    super();
+    super(aStatus, aPatient);
   }
 
   //------------------------

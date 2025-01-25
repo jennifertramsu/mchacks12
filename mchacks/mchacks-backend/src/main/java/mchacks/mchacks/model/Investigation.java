@@ -2,10 +2,9 @@
 /*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
 
-import java.util.*;
 
-// line 39 "model.ump"
-// line 70 "model.ump"
+// line 29 "model.ump"
+// line 59 "model.ump"
 public class Investigation
 {
 
@@ -13,142 +12,82 @@ public class Investigation
   // MEMBER VARIABLES
   //------------------------
 
+  //Investigation Attributes
+  private String status;
+
   //Investigation Associations
-  private List<Status> statuses;
+  private Patient patient;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Investigation()
+  public Investigation(String aStatus, Patient aPatient)
   {
-    statuses = new ArrayList<Status>();
+    status = aStatus;
+    boolean didAddPatient = setPatient(aPatient);
+    if (!didAddPatient)
+    {
+      throw new RuntimeException("Unable to create investigation due to patient. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
   }
 
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template association_GetMany */
-  public Status getStatus(int index)
+
+  public boolean setStatus(String aStatus)
   {
-    Status aStatus = statuses.get(index);
-    return aStatus;
+    boolean wasSet = false;
+    status = aStatus;
+    wasSet = true;
+    return wasSet;
   }
 
-  public List<Status> getStatuses()
+  public String getStatus()
   {
-    List<Status> newStatuses = Collections.unmodifiableList(statuses);
-    return newStatuses;
+    return status;
   }
-
-  public int numberOfStatuses()
+  /* Code from template association_GetOne */
+  public Patient getPatient()
   {
-    int number = statuses.size();
-    return number;
+    return patient;
   }
-
-  public boolean hasStatuses()
+  /* Code from template association_SetOneToMany */
+  public boolean setPatient(Patient aPatient)
   {
-    boolean has = statuses.size() > 0;
-    return has;
-  }
-
-  public int indexOfStatus(Status aStatus)
-  {
-    int index = statuses.indexOf(aStatus);
-    return index;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfStatuses()
-  {
-    return 0;
-  }
-  /* Code from template association_AddManyToManyMethod */
-  public boolean addStatus(Status aStatus)
-  {
-    boolean wasAdded = false;
-    if (statuses.contains(aStatus)) { return false; }
-    statuses.add(aStatus);
-    if (aStatus.indexOfInvestigation(this) != -1)
+    boolean wasSet = false;
+    if (aPatient == null)
     {
-      wasAdded = true;
-    }
-    else
-    {
-      wasAdded = aStatus.addInvestigation(this);
-      if (!wasAdded)
-      {
-        statuses.remove(aStatus);
-      }
-    }
-    return wasAdded;
-  }
-  /* Code from template association_RemoveMany */
-  public boolean removeStatus(Status aStatus)
-  {
-    boolean wasRemoved = false;
-    if (!statuses.contains(aStatus))
-    {
-      return wasRemoved;
+      return wasSet;
     }
 
-    int oldIndex = statuses.indexOf(aStatus);
-    statuses.remove(oldIndex);
-    if (aStatus.indexOfInvestigation(this) == -1)
+    Patient existingPatient = patient;
+    patient = aPatient;
+    if (existingPatient != null && !existingPatient.equals(aPatient))
     {
-      wasRemoved = true;
+      existingPatient.removeInvestigation(this);
     }
-    else
-    {
-      wasRemoved = aStatus.removeInvestigation(this);
-      if (!wasRemoved)
-      {
-        statuses.add(oldIndex,aStatus);
-      }
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addStatusAt(Status aStatus, int index)
-  {  
-    boolean wasAdded = false;
-    if(addStatus(aStatus))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfStatuses()) { index = numberOfStatuses() - 1; }
-      statuses.remove(aStatus);
-      statuses.add(index, aStatus);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveStatusAt(Status aStatus, int index)
-  {
-    boolean wasAdded = false;
-    if(statuses.contains(aStatus))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfStatuses()) { index = numberOfStatuses() - 1; }
-      statuses.remove(aStatus);
-      statuses.add(index, aStatus);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addStatusAt(aStatus, index);
-    }
-    return wasAdded;
+    patient.addInvestigation(this);
+    wasSet = true;
+    return wasSet;
   }
 
   public void delete()
   {
-    ArrayList<Status> copyOfStatuses = new ArrayList<Status>(statuses);
-    statuses.clear();
-    for(Status aStatus : copyOfStatuses)
+    Patient placeholderPatient = patient;
+    this.patient = null;
+    if(placeholderPatient != null)
     {
-      aStatus.removeInvestigation(this);
+      placeholderPatient.removeInvestigation(this);
     }
   }
 
+
+  public String toString()
+  {
+    return super.toString() + "["+
+            "status" + ":" + getStatus()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "patient = "+(getPatient()!=null?Integer.toHexString(System.identityHashCode(getPatient())):"null");
+  }
 }

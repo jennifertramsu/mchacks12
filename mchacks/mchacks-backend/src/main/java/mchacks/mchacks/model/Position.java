@@ -2,9 +2,10 @@
 /*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
 
+import java.util.*;
 
-// line 27 "model.ump"
-// line 60 "model.ump"
+// line 20 "model.ump"
+// line 54 "model.ump"
 public class Position
 {
 
@@ -13,8 +14,8 @@ public class Position
   //------------------------
 
   //Position Attributes
-  private String global;
-  private String category;
+  private int global;
+  private int category;
 
   //Position Associations
   private ERQueue eRQueue;
@@ -29,7 +30,7 @@ public class Position
   // CONSTRUCTOR
   //------------------------
 
-  public Position(String aGlobal, String aCategory, ERQueue aERQueue, Patient aPatient)
+  public Position(int aGlobal, int aCategory, ERQueue aERQueue, Patient aPatient)
   {
     cachedHashCode = -1;
     canSetERQueue = true;
@@ -48,19 +49,19 @@ public class Position
     patient = aPatient;
   }
 
-  public Position(String aGlobal, String aCategory, String aWaitingCountForERQueue, String aLongestWaitTimeForERQueue, CategoryStats aCategoryStatsForERQueue, String aIdForPatient, String aArrival_timeForPatient, String aTime_elapsedForPatient, ERQueue aERQueueForPatient, Triage aTriageForPatient)
+  public Position(int aGlobal, int aCategory, int aWaitingCountForERQueue, int aLongestWaitTimeForERQueue, String aIdForPatient, DateTime aArrival_timeForPatient, int aTime_elapsedForPatient, Dict aCategoryBreakdownForPatient, Dict aAverageWaitTimesForPatient, String aTriage_categoryForPatient, String aPhaseForPatient)
   {
     global = aGlobal;
     category = aCategory;
-    eRQueue = new ERQueue(aWaitingCountForERQueue, aLongestWaitTimeForERQueue, aCategoryStatsForERQueue, this);
-    patient = new Patient(aIdForPatient, aArrival_timeForPatient, aTime_elapsedForPatient, aERQueueForPatient, aTriageForPatient, this);
+    eRQueue = new ERQueue(aWaitingCountForERQueue, aLongestWaitTimeForERQueue, this);
+    patient = new Patient(aIdForPatient, aArrival_timeForPatient, aTime_elapsedForPatient, aCategoryBreakdownForPatient, aAverageWaitTimesForPatient, aTriage_categoryForPatient, aPhaseForPatient, this);
   }
 
   //------------------------
   // INTERFACE
   //------------------------
 
-  public boolean setGlobal(String aGlobal)
+  public boolean setGlobal(int aGlobal)
   {
     boolean wasSet = false;
     global = aGlobal;
@@ -68,7 +69,7 @@ public class Position
     return wasSet;
   }
 
-  public boolean setCategory(String aCategory)
+  public boolean setCategory(int aCategory)
   {
     boolean wasSet = false;
     category = aCategory;
@@ -76,12 +77,12 @@ public class Position
     return wasSet;
   }
 
-  public String getGlobal()
+  public int getGlobal()
   {
     return global;
   }
 
-  public String getCategory()
+  public int getCategory()
   {
     return category;
   }

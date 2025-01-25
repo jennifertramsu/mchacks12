@@ -5,9 +5,15 @@
 import java.util.*;
 
 // line 8 "model.ump"
-// line 55 "model.ump"
+// line 49 "model.ump"
 public class Patient
 {
+
+  //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  private static Map<String, Patient> patientsById = new HashMap<String, Patient>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -15,35 +21,34 @@ public class Patient
 
   //Patient Attributes
   private String id;
-  private String arrival_time;
-  private String time_elapsed;
+  private DateTime arrival_time;
+  private int time_elapsed;
+  private Dict categoryBreakdown;
+  private Dict averageWaitTimes;
+  private String triage_category;
+  private String phase;
 
   //Patient Associations
-  private ERQueue eRQueue;
-  private Triage triage;
-  private List<Status> statuses;
+  private List<Investigation> investigations;
   private Position position;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Patient(String aId, String aArrival_time, String aTime_elapsed, ERQueue aERQueue, Triage aTriage, Position aPosition)
+  public Patient(String aId, DateTime aArrival_time, int aTime_elapsed, Dict aCategoryBreakdown, Dict aAverageWaitTimes, String aTriage_category, String aPhase, Position aPosition)
   {
-    id = aId;
     arrival_time = aArrival_time;
     time_elapsed = aTime_elapsed;
-    boolean didAddERQueue = setERQueue(aERQueue);
-    if (!didAddERQueue)
+    categoryBreakdown = aCategoryBreakdown;
+    averageWaitTimes = aAverageWaitTimes;
+    triage_category = aTriage_category;
+    phase = aPhase;
+    if (!setId(aId))
     {
-      throw new RuntimeException("Unable to create patient due to eRQueue. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
-    boolean didAddTriage = setTriage(aTriage);
-    if (!didAddTriage)
-    {
-      throw new RuntimeException("Unable to create patient due to triage. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    statuses = new ArrayList<Status>();
+    investigations = new ArrayList<Investigation>();
     if (aPosition == null || aPosition.getPatient() != null)
     {
       throw new RuntimeException("Unable to create Patient due to aPosition. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
@@ -51,22 +56,19 @@ public class Patient
     position = aPosition;
   }
 
-  public Patient(String aId, String aArrival_time, String aTime_elapsed, ERQueue aERQueue, Triage aTriage, String aGlobalForPosition, String aCategoryForPosition, ERQueue aERQueueForPosition)
+  public Patient(String aId, DateTime aArrival_time, int aTime_elapsed, Dict aCategoryBreakdown, Dict aAverageWaitTimes, String aTriage_category, String aPhase, int aGlobalForPosition, int aCategoryForPosition, ERQueue aERQueueForPosition)
   {
-    id = aId;
+    if (!setId(aId))
+    {
+      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
     arrival_time = aArrival_time;
     time_elapsed = aTime_elapsed;
-    boolean didAddERQueue = setERQueue(aERQueue);
-    if (!didAddERQueue)
-    {
-      throw new RuntimeException("Unable to create patient due to eRQueue. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    boolean didAddTriage = setTriage(aTriage);
-    if (!didAddTriage)
-    {
-      throw new RuntimeException("Unable to create patient due to triage. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    statuses = new ArrayList<Status>();
+    categoryBreakdown = aCategoryBreakdown;
+    averageWaitTimes = aAverageWaitTimes;
+    triage_category = aTriage_category;
+    phase = aPhase;
+    investigations = new ArrayList<Investigation>();
     position = new Position(aGlobalForPosition, aCategoryForPosition, aERQueueForPosition, this);
   }
 
@@ -77,12 +79,23 @@ public class Patient
   public boolean setId(String aId)
   {
     boolean wasSet = false;
+    String anOldId = getId();
+    if (anOldId != null && anOldId.equals(aId)) {
+      return true;
+    }
+    if (hasWithId(aId)) {
+      return wasSet;
+    }
     id = aId;
     wasSet = true;
+    if (anOldId != null) {
+      patientsById.remove(anOldId);
+    }
+    patientsById.put(aId, this);
     return wasSet;
   }
 
-  public boolean setArrival_time(String aArrival_time)
+  public boolean setArrival_time(DateTime aArrival_time)
   {
     boolean wasSet = false;
     arrival_time = aArrival_time;
@@ -90,10 +103,42 @@ public class Patient
     return wasSet;
   }
 
-  public boolean setTime_elapsed(String aTime_elapsed)
+  public boolean setTime_elapsed(int aTime_elapsed)
   {
     boolean wasSet = false;
     time_elapsed = aTime_elapsed;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setCategoryBreakdown(Dict aCategoryBreakdown)
+  {
+    boolean wasSet = false;
+    categoryBreakdown = aCategoryBreakdown;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setAverageWaitTimes(Dict aAverageWaitTimes)
+  {
+    boolean wasSet = false;
+    averageWaitTimes = aAverageWaitTimes;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setTriage_category(String aTriage_category)
+  {
+    boolean wasSet = false;
+    triage_category = aTriage_category;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setPhase(String aPhase)
+  {
+    boolean wasSet = false;
+    phase = aPhase;
     wasSet = true;
     return wasSet;
   }
@@ -102,54 +147,74 @@ public class Patient
   {
     return id;
   }
+  /* Code from template attribute_GetUnique */
+  public static Patient getWithId(String aId)
+  {
+    return patientsById.get(aId);
+  }
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithId(String aId)
+  {
+    return getWithId(aId) != null;
+  }
 
-  public String getArrival_time()
+  public DateTime getArrival_time()
   {
     return arrival_time;
   }
 
-  public String getTime_elapsed()
+  public int getTime_elapsed()
   {
     return time_elapsed;
   }
-  /* Code from template association_GetOne */
-  public ERQueue getERQueue()
+
+  public Dict getCategoryBreakdown()
   {
-    return eRQueue;
+    return categoryBreakdown;
   }
-  /* Code from template association_GetOne */
-  public Triage getTriage()
+
+  public Dict getAverageWaitTimes()
   {
-    return triage;
+    return averageWaitTimes;
+  }
+
+  public String getTriage_category()
+  {
+    return triage_category;
+  }
+
+  public String getPhase()
+  {
+    return phase;
   }
   /* Code from template association_GetMany */
-  public Status getStatus(int index)
+  public Investigation getInvestigation(int index)
   {
-    Status aStatus = statuses.get(index);
-    return aStatus;
+    Investigation aInvestigation = investigations.get(index);
+    return aInvestigation;
   }
 
-  public List<Status> getStatuses()
+  public List<Investigation> getInvestigations()
   {
-    List<Status> newStatuses = Collections.unmodifiableList(statuses);
-    return newStatuses;
+    List<Investigation> newInvestigations = Collections.unmodifiableList(investigations);
+    return newInvestigations;
   }
 
-  public int numberOfStatuses()
+  public int numberOfInvestigations()
   {
-    int number = statuses.size();
+    int number = investigations.size();
     return number;
   }
 
-  public boolean hasStatuses()
+  public boolean hasInvestigations()
   {
-    boolean has = statuses.size() > 0;
+    boolean has = investigations.size() > 0;
     return has;
   }
 
-  public int indexOfStatus(Status aStatus)
+  public int indexOfInvestigation(Investigation aInvestigation)
   {
-    int index = statuses.indexOf(aStatus);
+    int index = investigations.indexOf(aInvestigation);
     return index;
   }
   /* Code from template association_GetOne */
@@ -157,146 +222,86 @@ public class Patient
   {
     return position;
   }
-  /* Code from template association_SetOneToMany */
-  public boolean setERQueue(ERQueue aERQueue)
-  {
-    boolean wasSet = false;
-    if (aERQueue == null)
-    {
-      return wasSet;
-    }
-
-    ERQueue existingERQueue = eRQueue;
-    eRQueue = aERQueue;
-    if (existingERQueue != null && !existingERQueue.equals(aERQueue))
-    {
-      existingERQueue.removePatient(this);
-    }
-    eRQueue.addPatient(this);
-    wasSet = true;
-    return wasSet;
-  }
-  /* Code from template association_SetOneToMany */
-  public boolean setTriage(Triage aTriage)
-  {
-    boolean wasSet = false;
-    if (aTriage == null)
-    {
-      return wasSet;
-    }
-
-    Triage existingTriage = triage;
-    triage = aTriage;
-    if (existingTriage != null && !existingTriage.equals(aTriage))
-    {
-      existingTriage.removePatient(this);
-    }
-    triage.addPatient(this);
-    wasSet = true;
-    return wasSet;
-  }
   /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfStatuses()
+  public static int minimumNumberOfInvestigations()
   {
     return 0;
   }
-  /* Code from template association_AddManyToManyMethod */
-  public boolean addStatus(Status aStatus)
+  /* Code from template association_AddManyToOne */
+  public Investigation addInvestigation(String aStatus)
+  {
+    return new Investigation(aStatus, this);
+  }
+
+  public boolean addInvestigation(Investigation aInvestigation)
   {
     boolean wasAdded = false;
-    if (statuses.contains(aStatus)) { return false; }
-    statuses.add(aStatus);
-    if (aStatus.indexOfPatient(this) != -1)
+    if (investigations.contains(aInvestigation)) { return false; }
+    Patient existingPatient = aInvestigation.getPatient();
+    boolean isNewPatient = existingPatient != null && !this.equals(existingPatient);
+    if (isNewPatient)
     {
-      wasAdded = true;
+      aInvestigation.setPatient(this);
     }
     else
     {
-      wasAdded = aStatus.addPatient(this);
-      if (!wasAdded)
-      {
-        statuses.remove(aStatus);
-      }
+      investigations.add(aInvestigation);
     }
+    wasAdded = true;
     return wasAdded;
   }
-  /* Code from template association_RemoveMany */
-  public boolean removeStatus(Status aStatus)
+
+  public boolean removeInvestigation(Investigation aInvestigation)
   {
     boolean wasRemoved = false;
-    if (!statuses.contains(aStatus))
+    //Unable to remove aInvestigation, as it must always have a patient
+    if (!this.equals(aInvestigation.getPatient()))
     {
-      return wasRemoved;
-    }
-
-    int oldIndex = statuses.indexOf(aStatus);
-    statuses.remove(oldIndex);
-    if (aStatus.indexOfPatient(this) == -1)
-    {
+      investigations.remove(aInvestigation);
       wasRemoved = true;
-    }
-    else
-    {
-      wasRemoved = aStatus.removePatient(this);
-      if (!wasRemoved)
-      {
-        statuses.add(oldIndex,aStatus);
-      }
     }
     return wasRemoved;
   }
   /* Code from template association_AddIndexControlFunctions */
-  public boolean addStatusAt(Status aStatus, int index)
+  public boolean addInvestigationAt(Investigation aInvestigation, int index)
   {  
     boolean wasAdded = false;
-    if(addStatus(aStatus))
+    if(addInvestigation(aInvestigation))
     {
       if(index < 0 ) { index = 0; }
-      if(index > numberOfStatuses()) { index = numberOfStatuses() - 1; }
-      statuses.remove(aStatus);
-      statuses.add(index, aStatus);
+      if(index > numberOfInvestigations()) { index = numberOfInvestigations() - 1; }
+      investigations.remove(aInvestigation);
+      investigations.add(index, aInvestigation);
       wasAdded = true;
     }
     return wasAdded;
   }
 
-  public boolean addOrMoveStatusAt(Status aStatus, int index)
+  public boolean addOrMoveInvestigationAt(Investigation aInvestigation, int index)
   {
     boolean wasAdded = false;
-    if(statuses.contains(aStatus))
+    if(investigations.contains(aInvestigation))
     {
       if(index < 0 ) { index = 0; }
-      if(index > numberOfStatuses()) { index = numberOfStatuses() - 1; }
-      statuses.remove(aStatus);
-      statuses.add(index, aStatus);
+      if(index > numberOfInvestigations()) { index = numberOfInvestigations() - 1; }
+      investigations.remove(aInvestigation);
+      investigations.add(index, aInvestigation);
       wasAdded = true;
     } 
     else 
     {
-      wasAdded = addStatusAt(aStatus, index);
+      wasAdded = addInvestigationAt(aInvestigation, index);
     }
     return wasAdded;
   }
 
   public void delete()
   {
-    ERQueue placeholderERQueue = eRQueue;
-    this.eRQueue = null;
-    if(placeholderERQueue != null)
+    patientsById.remove(getId());
+    for(int i=investigations.size(); i > 0; i--)
     {
-      placeholderERQueue.removePatient(this);
-    }
-    Triage placeholderTriage = triage;
-    this.triage = null;
-    if(placeholderTriage != null)
-    {
-      placeholderTriage.removePatient(this);
-    }
-    ArrayList<Status> copyOfStatuses = new ArrayList<Status>(statuses);
-    statuses.clear();
-    for(Status aStatus : copyOfStatuses)
-    {
-      aStatus.removePatient(this);
+      Investigation aInvestigation = investigations.get(i - 1);
+      aInvestigation.delete();
     }
     Position existingPosition = position;
     position = null;
@@ -311,10 +316,12 @@ public class Patient
   {
     return super.toString() + "["+
             "id" + ":" + getId()+ "," +
-            "arrival_time" + ":" + getArrival_time()+ "," +
-            "time_elapsed" + ":" + getTime_elapsed()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "eRQueue = "+(getERQueue()!=null?Integer.toHexString(System.identityHashCode(getERQueue())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "triage = "+(getTriage()!=null?Integer.toHexString(System.identityHashCode(getTriage())):"null") + System.getProperties().getProperty("line.separator") +
+            "time_elapsed" + ":" + getTime_elapsed()+ "," +
+            "triage_category" + ":" + getTriage_category()+ "," +
+            "phase" + ":" + getPhase()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "arrival_time" + "=" + (getArrival_time() != null ? !getArrival_time().equals(this)  ? getArrival_time().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "categoryBreakdown" + "=" + (getCategoryBreakdown() != null ? !getCategoryBreakdown().equals(this)  ? getCategoryBreakdown().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "averageWaitTimes" + "=" + (getAverageWaitTimes() != null ? !getAverageWaitTimes().equals(this)  ? getAverageWaitTimes().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "position = "+(getPosition()!=null?Integer.toHexString(System.identityHashCode(getPosition())):"null");
   }
 }
