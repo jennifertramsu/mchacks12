@@ -1,12 +1,13 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
-
+package mchacks.mchacks.model;
 
 import java.time.LocalDate;
 import java.util.*;
 
+import jakarta.persistence.Entity;
+
 // line 2 "model.ump"
 // line 47 "model.ump"
+@Entity
 public class ERQueue
 {
 

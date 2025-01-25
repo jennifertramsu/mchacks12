@@ -1,10 +1,4 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
-
-
-
-// line 32 "model.ump"
-// line 57 "model.ump"
+package mchacks.mchacks.model;
 
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;

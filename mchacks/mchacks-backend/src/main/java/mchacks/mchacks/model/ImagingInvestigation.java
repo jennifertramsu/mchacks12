@@ -1,11 +1,4 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
-
-
-
-// line 40 "model.ump"
-// line 67 "model.ump"
-
+package mchacks.mchacks.model;
 import jakarta.persistence.Entity;
 
 @Entity
