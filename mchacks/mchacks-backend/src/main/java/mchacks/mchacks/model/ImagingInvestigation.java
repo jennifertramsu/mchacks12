@@ -5,6 +5,10 @@
 
 // line 40 "model.ump"
 // line 67 "model.ump"
+
+import jakarta.persistence.Entity;
+
+@Entity
 public class ImagingInvestigation extends Investigation
 {
 

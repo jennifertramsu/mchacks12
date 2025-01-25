@@ -5,7 +5,14 @@
 
 // line 32 "model.ump"
 // line 57 "model.ump"
-public class Investigation
+
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.MappedSuperclass;
+
+@MappedSuperclass
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Investigation
 {
 
   //------------------------

@@ -2,10 +2,15 @@
 /*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
 
+import java.time.LocalDate;
 import java.util.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 // line 19 "model.ump"
 // line 52 "model.ump"
+@Entity
 public class Patient
 {
 
@@ -20,8 +25,9 @@ public class Patient
   //------------------------
 
   //Patient Attributes
+  @Id
   private String id;
-  private DateTime arrival_time;
+  private LocalDate arrival_time;
   private int time_elapsed;
   private String triage_category;
   private String phase;
@@ -36,7 +42,7 @@ public class Patient
   // CONSTRUCTOR
   //------------------------
 
-  public Patient(String aId, DateTime aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, int aGlobalPosition, int aCategoryPosition, ERQueue aERQueue)
+  public Patient(String aId, LocalDate aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, int aGlobalPosition, int aCategoryPosition, ERQueue aERQueue)
   {
     arrival_time = aArrival_time;
     time_elapsed = aTime_elapsed;
