@@ -1,10 +1,14 @@
 package mchacks.mchacks.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 
-@MappedSuperclass
+@Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Investigation
 {
@@ -12,16 +16,23 @@ public abstract class Investigation
   //------------------------
   // MEMBER VARIABLES
   //------------------------
-
+  @Id
+  @GeneratedValue
+  private int id;
   //Investigation Attributes
   private String status;
 
   //Investigation Associations
+  @ManyToOne
   private Patient patient;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
+
+  protected Investigation()
+  {
+  }
 
   public Investigation(String aStatus, Patient aPatient)
   {

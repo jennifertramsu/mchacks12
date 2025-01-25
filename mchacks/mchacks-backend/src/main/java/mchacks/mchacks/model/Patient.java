@@ -5,6 +5,8 @@ import java.util.*;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 // line 19 "model.ump"
 // line 52 "model.ump"
@@ -33,7 +35,9 @@ public class Patient
   private int categoryPosition;
 
   //Patient Associations
+  @ManyToOne
   private ERQueue eRQueue;
+  @OneToMany
   private List<Investigation> investigations;
 
   //------------------------

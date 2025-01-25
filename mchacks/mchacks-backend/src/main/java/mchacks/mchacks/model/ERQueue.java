@@ -4,9 +4,11 @@ import java.time.LocalDate;
 import java.util.*;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
-// line 2 "model.ump"
-// line 47 "model.ump"
+
 @Entity
 public class ERQueue
 {
@@ -16,6 +18,8 @@ public class ERQueue
   //------------------------
 
   //ERQueue Attributes
+  @Id
+  private int id;
   private int waitingCount;
   private int longestWaitTime;
   private int averageWaitTimeOne;
@@ -30,6 +34,7 @@ public class ERQueue
   private int numPatientsFive;
 
   //ERQueue Associations
+  @OneToMany
   private List<Patient> patients;
 
   //------------------------
