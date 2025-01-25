@@ -85,7 +85,7 @@ public class Patient
     return wasSet;
   }
 
-  public boolean setArrival_time(DateTime aArrival_time)
+  public boolean setArrival_time(LocalDate aArrival_time)
   {
     boolean wasSet = false;
     arrival_time = aArrival_time;
@@ -148,7 +148,7 @@ public class Patient
     return getWithId(aId) != null;
   }
 
-  public DateTime getArrival_time()
+  public LocalDate getArrival_time()
   {
     return arrival_time;
   }
@@ -235,11 +235,6 @@ public class Patient
   public static int minimumNumberOfInvestigations()
   {
     return 0;
-  }
-  /* Code from template association_AddManyToOne */
-  public Investigation addInvestigation(String aStatus)
-  {
-    return new Investigation(aStatus, this);
   }
 
   public boolean addInvestigation(Investigation aInvestigation)

@@ -2,6 +2,7 @@
 /*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
 
 
+import java.time.LocalDate;
 import java.util.*;
 
 // line 2 "model.ump"
@@ -246,7 +247,7 @@ public class ERQueue
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Patient addPatient(String aId, DateTime aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, int aGlobalPosition, int aCategoryPosition)
+  public Patient addPatient(String aId, LocalDate aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, int aGlobalPosition, int aCategoryPosition)
   {
     return new Patient(aId, aArrival_time, aTime_elapsed, aTriage_category, aPhase, aGlobalPosition, aCategoryPosition, this);
   }
