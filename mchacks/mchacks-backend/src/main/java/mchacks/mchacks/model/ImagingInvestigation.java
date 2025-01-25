@@ -3,8 +3,8 @@
 
 
 
-// line 37 "model.ump"
-// line 69 "model.ump"
+// line 46 "model.ump"
+// line 78 "model.ump"
 public class ImagingInvestigation extends Investigation
 {
 

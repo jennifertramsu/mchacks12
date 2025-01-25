@@ -3,8 +3,8 @@
 
 
 
-// line 33 "model.ump"
-// line 64 "model.ump"
+// line 42 "model.ump"
+// line 73 "model.ump"
 public class LabInvestigation extends Investigation
 {
 
