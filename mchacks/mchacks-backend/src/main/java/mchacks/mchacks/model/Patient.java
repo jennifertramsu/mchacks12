@@ -5,7 +5,7 @@
 import java.util.*;
 
 // line 19 "model.ump"
-// line 58 "model.ump"
+// line 52 "model.ump"
 public class Patient
 {
 
@@ -25,45 +25,35 @@ public class Patient
   private int time_elapsed;
   private String triage_category;
   private String phase;
+  private int globalPosition;
+  private int categoryPosition;
 
   //Patient Associations
+  private ERQueue eRQueue;
   private List<Investigation> investigations;
-  private Position position;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Patient(String aId, DateTime aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, Position aPosition)
+  public Patient(String aId, DateTime aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, int aGlobalPosition, int aCategoryPosition, ERQueue aERQueue)
   {
     arrival_time = aArrival_time;
     time_elapsed = aTime_elapsed;
     triage_category = aTriage_category;
     phase = aPhase;
+    globalPosition = aGlobalPosition;
+    categoryPosition = aCategoryPosition;
     if (!setId(aId))
     {
       throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
-    investigations = new ArrayList<Investigation>();
-    if (aPosition == null || aPosition.getPatient() != null)
+    boolean didAddERQueue = setERQueue(aERQueue);
+    if (!didAddERQueue)
     {
-      throw new RuntimeException("Unable to create Patient due to aPosition. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+      throw new RuntimeException("Unable to create patient due to eRQueue. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
-    position = aPosition;
-  }
-
-  public Patient(String aId, DateTime aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, int aGlobalForPosition, int aCategoryForPosition, ERQueue aERQueueForPosition)
-  {
-    if (!setId(aId))
-    {
-      throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
-    arrival_time = aArrival_time;
-    time_elapsed = aTime_elapsed;
-    triage_category = aTriage_category;
-    phase = aPhase;
     investigations = new ArrayList<Investigation>();
-    position = new Position(aGlobalForPosition, aCategoryForPosition, aERQueueForPosition, this);
   }
 
   //------------------------
@@ -121,6 +111,22 @@ public class Patient
     return wasSet;
   }
 
+  public boolean setGlobalPosition(int aGlobalPosition)
+  {
+    boolean wasSet = false;
+    globalPosition = aGlobalPosition;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setCategoryPosition(int aCategoryPosition)
+  {
+    boolean wasSet = false;
+    categoryPosition = aCategoryPosition;
+    wasSet = true;
+    return wasSet;
+  }
+
   public String getId()
   {
     return id;
@@ -155,6 +161,21 @@ public class Patient
   {
     return phase;
   }
+
+  public int getGlobalPosition()
+  {
+    return globalPosition;
+  }
+
+  public int getCategoryPosition()
+  {
+    return categoryPosition;
+  }
+  /* Code from template association_GetOne */
+  public ERQueue getERQueue()
+  {
+    return eRQueue;
+  }
   /* Code from template association_GetMany */
   public Investigation getInvestigation(int index)
   {
@@ -185,10 +206,24 @@ public class Patient
     int index = investigations.indexOf(aInvestigation);
     return index;
   }
-  /* Code from template association_GetOne */
-  public Position getPosition()
+  /* Code from template association_SetOneToMany */
+  public boolean setERQueue(ERQueue aERQueue)
   {
-    return position;
+    boolean wasSet = false;
+    if (aERQueue == null)
+    {
+      return wasSet;
+    }
+
+    ERQueue existingERQueue = eRQueue;
+    eRQueue = aERQueue;
+    if (existingERQueue != null && !existingERQueue.equals(aERQueue))
+    {
+      existingERQueue.removePatient(this);
+    }
+    eRQueue.addPatient(this);
+    wasSet = true;
+    return wasSet;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfInvestigations()
@@ -266,16 +301,16 @@ public class Patient
   public void delete()
   {
     patientsById.remove(getId());
+    ERQueue placeholderERQueue = eRQueue;
+    this.eRQueue = null;
+    if(placeholderERQueue != null)
+    {
+      placeholderERQueue.removePatient(this);
+    }
     for(int i=investigations.size(); i > 0; i--)
     {
       Investigation aInvestigation = investigations.get(i - 1);
       aInvestigation.delete();
-    }
-    Position existingPosition = position;
-    position = null;
-    if (existingPosition != null)
-    {
-      existingPosition.delete();
     }
   }
 
@@ -286,8 +321,10 @@ public class Patient
             "id" + ":" + getId()+ "," +
             "time_elapsed" + ":" + getTime_elapsed()+ "," +
             "triage_category" + ":" + getTriage_category()+ "," +
-            "phase" + ":" + getPhase()+ "]" + System.getProperties().getProperty("line.separator") +
+            "phase" + ":" + getPhase()+ "," +
+            "globalPosition" + ":" + getGlobalPosition()+ "," +
+            "categoryPosition" + ":" + getCategoryPosition()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "arrival_time" + "=" + (getArrival_time() != null ? !getArrival_time().equals(this)  ? getArrival_time().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "position = "+(getPosition()!=null?Integer.toHexString(System.identityHashCode(getPosition())):"null");
+            "  " + "eRQueue = "+(getERQueue()!=null?Integer.toHexString(System.identityHashCode(getERQueue())):"null");
   }
 }

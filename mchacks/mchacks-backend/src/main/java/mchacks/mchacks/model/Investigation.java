@@ -3,8 +3,8 @@
 
 
 
-// line 38 "model.ump"
-// line 68 "model.ump"
+// line 32 "model.ump"
+// line 57 "model.ump"
 public class Investigation
 {
 
