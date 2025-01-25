@@ -4,8 +4,8 @@
 
 import java.util.*;
 
-// line 20 "model.ump"
-// line 54 "model.ump"
+// line 29 "model.ump"
+// line 63 "model.ump"
 public class Position
 {
 
@@ -49,12 +49,12 @@ public class Position
     patient = aPatient;
   }
 
-  public Position(int aGlobal, int aCategory, int aWaitingCountForERQueue, int aLongestWaitTimeForERQueue, String aIdForPatient, DateTime aArrival_timeForPatient, int aTime_elapsedForPatient, Dict aCategoryBreakdownForPatient, Dict aAverageWaitTimesForPatient, String aTriage_categoryForPatient, String aPhaseForPatient)
+  public Position(int aGlobal, int aCategory, int aWaitingCountForERQueue, int aLongestWaitTimeForERQueue, int aAverageWaitTimeOneForERQueue, int aAverageWaitTimeTwoForERQueue, int aAverageWaitTimeThreeForERQueue, int aAverageWaitTimeFourForERQueue, int aAverageWaitTimeFiveForERQueue, int aNumPatientsOneForERQueue, int aNumPatientsTwoForERQueue, int aNumPatientsThreeForERQueue, int aNumPatientsFourForERQueue, int aNumPatientsFiveForERQueue, String aIdForPatient, DateTime aArrival_timeForPatient, int aTime_elapsedForPatient, String aTriage_categoryForPatient, String aPhaseForPatient)
   {
     global = aGlobal;
     category = aCategory;
-    eRQueue = new ERQueue(aWaitingCountForERQueue, aLongestWaitTimeForERQueue, this);
-    patient = new Patient(aIdForPatient, aArrival_timeForPatient, aTime_elapsedForPatient, aCategoryBreakdownForPatient, aAverageWaitTimesForPatient, aTriage_categoryForPatient, aPhaseForPatient, this);
+    eRQueue = new ERQueue(aWaitingCountForERQueue, aLongestWaitTimeForERQueue, aAverageWaitTimeOneForERQueue, aAverageWaitTimeTwoForERQueue, aAverageWaitTimeThreeForERQueue, aAverageWaitTimeFourForERQueue, aAverageWaitTimeFiveForERQueue, aNumPatientsOneForERQueue, aNumPatientsTwoForERQueue, aNumPatientsThreeForERQueue, aNumPatientsFourForERQueue, aNumPatientsFiveForERQueue, this);
+    patient = new Patient(aIdForPatient, aArrival_timeForPatient, aTime_elapsedForPatient, aTriage_categoryForPatient, aPhaseForPatient, this);
   }
 
   //------------------------

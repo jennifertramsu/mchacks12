@@ -4,8 +4,8 @@
 
 import java.util.*;
 
-// line 8 "model.ump"
-// line 49 "model.ump"
+// line 19 "model.ump"
+// line 58 "model.ump"
 public class Patient
 {
 
@@ -23,8 +23,6 @@ public class Patient
   private String id;
   private DateTime arrival_time;
   private int time_elapsed;
-  private Dict categoryBreakdown;
-  private Dict averageWaitTimes;
   private String triage_category;
   private String phase;
 
@@ -36,12 +34,10 @@ public class Patient
   // CONSTRUCTOR
   //------------------------
 
-  public Patient(String aId, DateTime aArrival_time, int aTime_elapsed, Dict aCategoryBreakdown, Dict aAverageWaitTimes, String aTriage_category, String aPhase, Position aPosition)
+  public Patient(String aId, DateTime aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, Position aPosition)
   {
     arrival_time = aArrival_time;
     time_elapsed = aTime_elapsed;
-    categoryBreakdown = aCategoryBreakdown;
-    averageWaitTimes = aAverageWaitTimes;
     triage_category = aTriage_category;
     phase = aPhase;
     if (!setId(aId))
@@ -56,7 +52,7 @@ public class Patient
     position = aPosition;
   }
 
-  public Patient(String aId, DateTime aArrival_time, int aTime_elapsed, Dict aCategoryBreakdown, Dict aAverageWaitTimes, String aTriage_category, String aPhase, int aGlobalForPosition, int aCategoryForPosition, ERQueue aERQueueForPosition)
+  public Patient(String aId, DateTime aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, int aGlobalForPosition, int aCategoryForPosition, ERQueue aERQueueForPosition)
   {
     if (!setId(aId))
     {
@@ -64,8 +60,6 @@ public class Patient
     }
     arrival_time = aArrival_time;
     time_elapsed = aTime_elapsed;
-    categoryBreakdown = aCategoryBreakdown;
-    averageWaitTimes = aAverageWaitTimes;
     triage_category = aTriage_category;
     phase = aPhase;
     investigations = new ArrayList<Investigation>();
@@ -111,22 +105,6 @@ public class Patient
     return wasSet;
   }
 
-  public boolean setCategoryBreakdown(Dict aCategoryBreakdown)
-  {
-    boolean wasSet = false;
-    categoryBreakdown = aCategoryBreakdown;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setAverageWaitTimes(Dict aAverageWaitTimes)
-  {
-    boolean wasSet = false;
-    averageWaitTimes = aAverageWaitTimes;
-    wasSet = true;
-    return wasSet;
-  }
-
   public boolean setTriage_category(String aTriage_category)
   {
     boolean wasSet = false;
@@ -166,16 +144,6 @@ public class Patient
   public int getTime_elapsed()
   {
     return time_elapsed;
-  }
-
-  public Dict getCategoryBreakdown()
-  {
-    return categoryBreakdown;
-  }
-
-  public Dict getAverageWaitTimes()
-  {
-    return averageWaitTimes;
   }
 
   public String getTriage_category()
@@ -320,8 +288,6 @@ public class Patient
             "triage_category" + ":" + getTriage_category()+ "," +
             "phase" + ":" + getPhase()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "arrival_time" + "=" + (getArrival_time() != null ? !getArrival_time().equals(this)  ? getArrival_time().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "categoryBreakdown" + "=" + (getCategoryBreakdown() != null ? !getCategoryBreakdown().equals(this)  ? getCategoryBreakdown().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "averageWaitTimes" + "=" + (getAverageWaitTimes() != null ? !getAverageWaitTimes().equals(this)  ? getAverageWaitTimes().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "position = "+(getPosition()!=null?Integer.toHexString(System.identityHashCode(getPosition())):"null");
   }
 }
