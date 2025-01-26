@@ -77,7 +77,7 @@ var AXIOS = axios.create({
 
 <style>
 #nav{
-    background-color: none;
+    background-color: transparent;
     border-style:none;
 }
 #Top-bar{

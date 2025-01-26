@@ -96,7 +96,7 @@
             </div>
         
             <div id = 'game'>
-                <button @click = 'goToGame' >Bored?</button>
+                <button @click = 'goToGame' id="nav-b" >Bored?</button>
             </div>
         </div>
     </div>
@@ -187,7 +187,7 @@
 </script>
 
 <style>
-.button{
+#nav-b{
     background-color:black;
     width: 5%;
     height: 10%;
