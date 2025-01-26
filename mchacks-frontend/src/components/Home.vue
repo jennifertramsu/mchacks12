@@ -47,10 +47,24 @@
                     <div class="event-dot"></div>
                     <div class="event-content">
                         <p class="event-date">Investigation</p>
-                        <p class="event-description">
-                            <p>Labs Investigations: {{ patientInfo.status.investigations.labs }}</p>
-                            <p>Imaging Investigations: {{ patientInfo.status.investigations.imaging }}</p>
-                        </p>
+                        <div class="investigations-event-description">
+                                <div v-if="patientInfo.status.investigations">
+                                    <div v-if="patientInfo.status.investigations.labs">
+                                        <p> Lab Investigations: {{ patientInfo.status.investigations.labs }}</p>  
+                                    </div>
+                                    <div v-else>
+
+                                    </div>
+                                    <div v-if="patientInfo.status.investigations.imaging">
+                                        <p> Imaging Investigations: {{ patientInfo.status.investigations.imaging }}</p>
+                                    </div> 
+                                    <div v-else></div>                                
+                                    
+                                </div>
+                                <div v-else>
+                                    <p>N/A</p>
+                                </div>    
+                            </div>
                     </div>
                 </div>
 
@@ -76,7 +90,7 @@
             </div>
         
             <div id = 'game'>
-                <div class = 'button'> Bored? </div>
+                <button @click = 'goToGame' >Bored?</button>
             </div>
         </div>
     </div>
@@ -131,7 +145,7 @@
                     }else if (this.phase ==='discharged'){
                         this.phase_index=6;
                     }
-                    console.log(this.phase_index);                    
+                    console.log(this.patientInfo);                    
                     this.next_phase = this.PhaseNames[this.phase_index+1];
 
 
@@ -153,8 +167,12 @@
                     console.error("Could not fetch data",error);
                 }
             },
+            goToGame(){
+                this.$router.push('/game');
+            }
             
-        },
+            
+        }
 
     };
 </script>
