@@ -41,13 +41,19 @@ public class QuestionController {
         return new QuestionListDTO(questions);        
     }
 
+    @GetMapping("/quiz/questions/{question_id}")
+    public QuestionResponseDTO getQuestion(@PathVariable("question_id") int question_id) {
+        Question q = questionService.getQuestion(question_id);
+        return new QuestionResponseDTO(q);
+    }    
+
     @GetMapping("/quiz/questions/random")
     public QuestionResponseDTO getRandomQuestion() {
         Question q = questionService.getRandomQuestion();
         return new QuestionResponseDTO(q);
     }
 
-    @GetMapping("/quiz/questions/{question_id}/answer")
+    @GetMapping("/quiz/questions/{question_id}/answers")
     public List<AnswerResponseDTO> getOptions(@PathVariable("question_id") int question_id) {
         List<Answer> a = questionService.loadQuestion(question_id);
         List<AnswerResponseDTO> answers = new ArrayList<>();
@@ -63,8 +69,8 @@ public class QuestionController {
         return new QuestionResponseDTO(q);
     }
 
-    @PostMapping("/quiz/questions/{question_id}/answer")
-    public AnswerResponseDTO postMethodName(@RequestBody AnswerRequestDTO answer, @PathVariable("question_id") int question_id) {
+    @PostMapping("/quiz/questions/{question_id}/answers")
+    public AnswerResponseDTO createAnswer(@RequestBody AnswerRequestDTO answer, @PathVariable("question_id") int question_id) {
         Answer a = questionService.createAnswer(question_id, answer.getAnswer(), answer.getCorrect());   
         return new AnswerResponseDTO(a);
     }    

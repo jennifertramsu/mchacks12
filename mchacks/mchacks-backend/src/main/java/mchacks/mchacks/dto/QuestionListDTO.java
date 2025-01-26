@@ -15,4 +15,8 @@ public class QuestionListDTO {
     public List<QuestionResponseDTO> getQuestions() {
         return questions;
     }
+
+    public int size() {
+        return questions.size();
+    }
 }

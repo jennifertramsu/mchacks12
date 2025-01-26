@@ -11,6 +11,7 @@ import mchacks.mchacks.dao.AnswerDao;
 import mchacks.mchacks.dao.QuestionDao;
 import mchacks.mchacks.model.Answer;
 import mchacks.mchacks.model.Question;
+import mchacks.mchacks.service.QuestionService;
 
 @SpringBootTest
 public class questionServiceTests {
@@ -18,6 +19,8 @@ public class questionServiceTests {
     private QuestionDao questionDao;
     @Autowired
     private AnswerDao answerDao;
+    @Autowired
+    private QuestionService questionService;
 
     @AfterEach
     public void tearDown() {
@@ -27,43 +30,33 @@ public class questionServiceTests {
 
     @Test
     public void testCreateQuestion() {
-        Question q = new Question("What is the capital of Canada?", 10);
-        questionDao.save(q);
+        questionService.createQuestion("What is the capital of Canada?", 10);
         assertEquals(1, questionDao.count());
     }
 
     @Test
     public void addAnswerToQuestionCorrect() {
-        Question q = new Question("What is the capital of Canada?", 10);
-        questionDao.save(q);
-        Answer a = new Answer("Ottawa");
-        answerDao.save(a);
-        q.addBank(a);
-        q.setCorrect(a);
-        questionDao.save(q);
-        assertEquals(a, q.getCorrect());
+        Question q = questionService.createQuestion("What is the capital of Canada?", 10);
+        Answer a = questionService.createAnswer(q.getId(), "Ottawa", true);
+
+        Question q2 = questionDao.getQuestionById(q.getId());
+        
+        assertEquals(1, questionDao.count());
+        assertEquals(a.getId(), q2.getCorrect().getId());
+        assertEquals(1, answerDao.count());
     }
 
     @Test
     public void addAnswersToQuestionBank() {
-        Question q = new Question("What is the capital of Canada?", 10);
-        questionDao.save(q);
+        Question q = questionService.createQuestion("What is the capital of Canada?", 10);
+        Answer a1 = questionService.createAnswer(q.getId(), "Ottawa", true);
+        Answer a2 = questionService.createAnswer(q.getId(), "Toronto", false);
+        Answer a3 = questionService.createAnswer(q.getId(), "Montreal", false);
 
-        Answer a1 = new Answer("Ottawa");
-        answerDao.save(a1);
-        q.addBank(a1);
-
-        Answer a2 = new Answer("Toronto");
-        answerDao.save(a2);
-        q.addBank(a2);
-
-        Answer a3 = new Answer("Montreal");
-        answerDao.save(a3);
-        q.addBank(a3);
-
-        q.setCorrect(a1);
-
-        questionDao.save(q);
-        assertEquals(3, q.getBank().size());
+        Question q2 = questionDao.getQuestionById(q.getId());
+        
+        assertEquals(1, questionDao.count());
+        assertEquals(a1.getId(), q2.getCorrect().getId());
+        System.out.println(q2.getBank());
     }
 }

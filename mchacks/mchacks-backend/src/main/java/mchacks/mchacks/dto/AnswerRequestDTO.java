@@ -8,8 +8,7 @@ public class AnswerRequestDTO {
     public AnswerRequestDTO() {
     }
 
-    public AnswerRequestDTO(int id, String answer, boolean correct) {
-        this.id = id;
+    public AnswerRequestDTO(String answer, boolean correct) {
         this.answer = answer;
         this.correct = correct;
     }

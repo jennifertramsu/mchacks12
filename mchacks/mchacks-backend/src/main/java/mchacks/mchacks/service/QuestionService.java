@@ -8,12 +8,15 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import mchacks.mchacks.model.Answer;
 import mchacks.mchacks.model.Question;
+import mchacks.mchacks.dao.AnswerDao;
 import mchacks.mchacks.dao.QuestionDao;
 
 @Service
 public class QuestionService {
     @Autowired
     private QuestionDao questionDao;
+    @Autowired
+    private AnswerDao answerDao;
 
     public QuestionService(QuestionDao questionDao) {
         this.questionDao = questionDao;
@@ -79,6 +82,7 @@ public class QuestionService {
     @Transactional 
     public Answer createAnswer(int q_id, String text, boolean correct) {
         Answer a = new Answer(text);
+        answerDao.save(a);
         Question q = questionDao.getQuestionById(q_id);
 
         if (correct) {
@@ -87,6 +91,7 @@ public class QuestionService {
             q.addBank(a);
         }
         questionDao.save(q);
+        
         return a;
     }
 }
