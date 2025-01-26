@@ -2,9 +2,9 @@
     <div id = 'content'>
         <div id ='header'>
             <div id = 'time'>
-                <p id="waiting-time"> 25 </p>
+                <p id="waiting-time"> {{ estimated_waiting }} </p>
                 <p> Estimated Waiting Time in Minutes </p>
-                <p> Next Step: </p>
+                <p> Next Step: {{ next_phase }} </p>
             </div>
         
             <div id = 'breathing'>
@@ -21,6 +21,17 @@
                         <p class="event-description"></p>
                     </div>
                 </div>
+                <div class = 'timeline-item'>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <p class="event-date">Triage</p>
+                        <p class="event-description">
+                            <p> Triage Category: {{ category_name}} </p>
+                            <p> General Queue No.: {{ patientInfo.queue_position.global}} </p>
+                            <p> Category Queue No.: {{ patientInfo.queue_position.category }}</p>
+                        </p>
+                    </div>
+                </div>
 
                 <div class = 'timeline-item'>
                     <div class="event-dot"></div>
@@ -30,25 +41,15 @@
                     </div>
                 </div>
            
-                <div class = 'timeline-item'>
-                    <div class="event-dot"></div>
-                    <div class="event-content">
-                        <p class="event-date">Triage</p>
-                        <p class="event-description">
-                            <p> Triage Category: </p>
-                            <p> General Queue No.: </p>
-                            <p> Category Queue No.: </p>
-                        </p>
-                    </div>
-                </div>
+                
            
                 <div class = 'timeline-item'>
                     <div class="event-dot"></div>
                     <div class="event-content">
                         <p class="event-date">Investigation</p>
                         <p class="event-description">
-                            <p>General Queue No.: </p>
-                            <p>Category Queue No.: </p>
+                            <p>Labs Investigations: {{ patientInfo.status.investigations.labs }}</p>
+                            <p>Imaging Investigations: {{ patientInfo.status.investigations.imaging }}</p>
                         </p>
                     </div>
                 </div>
@@ -64,7 +65,7 @@
                 <div class = 'timeline-item'>
                     <div class="event-dot"></div>
                     <div class="event-content">
-                        <p class="event-date">Discharged</p>
+                        <p class="event-date">Discharge</p>
                         <p class="event-description"></p>
                     </div>
                 </div>
@@ -89,23 +90,70 @@
         data(){
             return{
                 patientInfo: [],
-                arrival_time:0, //to store the fetched data
+                CategoryNames: ['Resuscitation','Emergent','Urgent','Less Urgent','Non Urgent'],
+                stats:[],
+                category:0,
+                category_name:'',
+                status:'',
+                phase_index: 0,
+                PhaseNames: ['Admission','Triage','Registration','Investigation Pending','Treatment','Admission','Discharge'],
+                phase: '',
+                estimated_waiting: 0,
+                next_phase:'',
             };
         },
         mounted(){
             //Fetch data when the component is mounted
             this.fetchPatientInfo();
+            this.fetchStats();
         },
         methods:{
             async fetchPatientInfo(){
                 try {
                     const response = await axios.get('https://ifem-award-mchacks-2025.onrender.com/api/v1/patient/anon_5679');
-                    this.arrival_time = response.data;
+                    this.patientInfo = response.data;
+                    this.category = this.patientInfo.triage_category -1;
+                    this.category_name = this.CategoryNames[this.category];
+                    this.status = this.patientInfo.status.current_phase;
+                    console.log(this.status)
+
+                    this.phase = this.patientInfo.status.current_phase
+                    if (this.phase === 'admitted'){
+                        this.phase_index = 1;
+                    }else if (this.phase === 'registered'){
+                        this.phase_index=2;
+                    }else if (this.phase === 'triaged'){
+                        this.phase_index=3;
+                    }else if (this.phase ==='investigations_pending'){
+                        this.phase_index=4;
+                    }else if (this.phase ==='treatment'){
+                        this.phase_index=5;
+                    }else if (this.phase ==='discharged'){
+                        this.phase_index=6;
+                    }
+                    console.log(this.phase_index);                    
+                    this.next_phase = this.PhaseNames[this.phase_index+1];
+
+
+                    console.log(this.patientInfo.arrival_time)
                 } catch(error){
                     console.error("Could not fetch data",error);
                 }
                 
             },
+
+            async fetchStats(){
+                try{
+                const response = await axios.get('https://ifem-award-mchacks-2025.onrender.com/api/v1/stats/current');
+                this.stats = response.data;
+                this.estimated_waiting = this.stats.averageWaitTimes[this.category + 1];
+                    console.log(this.stats)
+                    console.log(this.category)
+                } catch(error){
+                    console.error("Could not fetch data",error);
+                }
+            },
+            
         },
 
     };
