@@ -2,7 +2,13 @@
     <div id = 'content'>
         <div id ='header'>
             <div id = 'time'>
-                <p id="waiting-time"> {{ estimated_waiting }} </p>
+                <div v-if="this.phase === 'triaged' || this.phase ==='registered'" >
+                    <p id="waiting-time"> {{ estimated_waiting }} </p>
+                </div>
+                <div v-else>
+                    <p id="waiting-time"> N/A </p>
+                </div>
+                
                 <p> Estimated Waiting Time in Minutes </p>
                 <p> Next Step: {{ next_phase }} </p>
             </div>
@@ -133,17 +139,17 @@
 
                     this.phase = this.patientInfo.status.current_phase
                     if (this.phase === 'admitted'){
-                        this.phase_index = 1;
+                        this.phase_index = 0;
                     }else if (this.phase === 'registered'){
-                        this.phase_index=2;
+                        this.phase_index=1;
                     }else if (this.phase === 'triaged'){
-                        this.phase_index=3;
+                        this.phase_index=2;
                     }else if (this.phase ==='investigations_pending'){
-                        this.phase_index=4;
+                        this.phase_index=3;
                     }else if (this.phase ==='treatment'){
-                        this.phase_index=5;
+                        this.phase_index=4;
                     }else if (this.phase ==='discharged'){
-                        this.phase_index=6;
+                        this.phase_index=5;
                     }
                     console.log(this.patientInfo);                    
                     this.next_phase = this.PhaseNames[this.phase_index+1];
@@ -160,7 +166,10 @@
                 try{
                 const response = await axios.get('https://ifem-award-mchacks-2025.onrender.com/api/v1/stats/current');
                 this.stats = response.data;
-                this.estimated_waiting = this.stats.averageWaitTimes[this.category + 1];
+                this.estimated_waiting = this.stats.averageWaitTimes[this.category + 1] - this.patientInfo.time_elapsed;
+                if (this.estimated_waiting < 0){
+                    this.estimated_waiting = 0;
+                }
                     console.log(this.stats)
                     console.log(this.category)
                 } catch(error){
@@ -242,8 +251,7 @@
 
 #content{
     padding-top: 10%;
-    padding-bottom: 50px;
-    background-image:linear-gradient(180deg,#7cf3ff,#fffeda,white);
+    padding-bottom: 100px;
 }
 
 </style>
