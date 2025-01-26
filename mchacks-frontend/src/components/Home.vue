@@ -13,22 +13,26 @@
                 <p> Next Step: {{ next_phase }} </p>
             </div>
         
-            <div id = 'breathing'>
-            </div>
+            
 
         </div>
 
         <div id = 'body'>
             <div id = 'timeline'>
                 <div class = 'timeline-item'>
-                    <div class="event-dot"></div>
+                    <div class="event-dot-black" id="first-dot"></div>
                     <div class="event-content">
                         <p class="event-date">Admission</p>
                         <p class="event-description"></p>
                     </div>
                 </div>
                 <div class = 'timeline-item'>
-                    <div class="event-dot"></div>
+                    <div v-if="this.phase ==='admitted'">
+                        <div class="event-dot-white"></div>
+                    </div>
+                    <div v-else>
+                        <div class="event-dot-black"></div>
+                    </div>
                     <div class="event-content">
                         <p class="event-date">Triage</p>
                         <p class="event-description">
@@ -39,8 +43,13 @@
                     </div>
                 </div>
 
-                <div class = 'timeline-item'>
-                    <div class="event-dot"></div>
+                <div class = 'timeline-item' >
+                    <div v-if="this.phase ==='admitted'||this.phase==='triaged'">
+                        <div class="event-dot-white"></div>
+                    </div>
+                    <div v-else>
+                        <div class="event-dot-black"></div>
+                    </div>
                     <div class="event-content">
                         <p class="event-date">Registration</p>
                         <p class="event-description"></p>
@@ -49,8 +58,13 @@
            
                 
            
-                <div class = 'timeline-item'>
-                    <div class="event-dot"></div>
+                <div class = 'timeline-item' >
+                    <div v-if="this.phase ==='admitted'||this.phase==='triaged'||this.phase==='registered'">
+                        <div class="event-dot-white"></div>
+                    </div>
+                    <div v-else>
+                        <div class="event-dot-black"></div>
+                    </div>
                     <div class="event-content">
                         <p class="event-date">Investigation</p>
                         <div class="investigations-event-description">
@@ -74,16 +88,26 @@
                     </div>
                 </div>
 
-                <div class = 'timeline-item'>
-                    <div class="event-dot"></div>
+                <div class = 'timeline-item' >
+                    <div v-if="this.phase ==='admitted'||this.phase==='triaged'||this.phase==='investigations_pending'">
+                        <div class="event-dot-white"></div>
+                    </div>
+                    <div v-else>
+                        <div class="event-dot-black"></div>
+                    </div>
                     <div class="event-content">
                         <p class="event-date">Treatment</p>
                         <p class="event-description"></p>
                     </div>
                 </div>
 
-                <div class = 'timeline-item'>
-                    <div class="event-dot"></div>
+                <div class = 'timeline-item' id="last">
+                    <div v-if="this.phase ==='discharged'">
+                        <div class="event-dot-black" id="last-dot"></div>
+                    </div>
+                    <div v-else>
+                        <div class="event-dot-white" id = 'last-dot'></div>
+                    </div>
                     <div class="event-content">
                         <p class="event-date">Discharge</p>
                         <p class="event-description"></p>
@@ -96,7 +120,8 @@
             </div>
         
             <div id = 'game'>
-                <button @click = 'goToGame' id="nav-b" >Bored?</button>
+                <button @click = 'goToGame' class="nav-b" >Bored?</button>
+                <button @click = 'goToRelax' class="nav-b" >Anxious?</button>
             </div>
         </div>
     </div>
@@ -116,7 +141,7 @@
                 category_name:'',
                 status:'',
                 phase_index: 0,
-                PhaseNames: ['Admission','Triage','Registration','Investigation Pending','Treatment','Admission','Discharge'],
+                PhaseNames: ['Admission','Triage','Registration','Investigation Pending','Treatment','Discharge','None'],
                 phase: '',
                 estimated_waiting: 0,
                 next_phase:'',
@@ -127,6 +152,7 @@
             this.fetchPatientInfo();
             this.fetchStats();
         },
+        
         methods:{
             async fetchPatientInfo(){
                 try {
@@ -140,6 +166,7 @@
                     this.phase = this.patientInfo.status.current_phase
                     if (this.phase === 'admitted'){
                         this.phase_index = 0;
+
                     }else if (this.phase === 'registered'){
                         this.phase_index=1;
                     }else if (this.phase === 'triaged'){
@@ -153,6 +180,7 @@
                     }
                     console.log(this.patientInfo);                    
                     this.next_phase = this.PhaseNames[this.phase_index+1];
+        
 
 
                     console.log(this.patientInfo.arrival_time)
@@ -178,7 +206,10 @@
             },
             goToGame(){
                 this.$router.push('/game');
-            }
+            },
+            goToRelax(){
+                this.$router.push('/relax');
+            },
             
             
         }
@@ -187,34 +218,48 @@
 </script>
 
 <style>
-#nav-b{
+#body{
+    width:100vw;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+}
+#game{
+    flex-direction:column;
+
+}
+.nav-b{
     background-color:black;
-    width: 5%;
-    height: 10%;
+    width: 60%;
+    height: 30%;
+    border-top-right-radius: 70px;
+    border-bottom-right-radius: 70px;
+    padding-right:8px;
     writing-mode: vertical-lr;
+    transform: rotate(180deg);
     text-orientation: mixed;
     color: white;
+    margin-top:10px;
+    float: right;
 
 
 }
-.header{
+#header{
     width: 100%;
-    flex-direction:row;
+    padding-bottom:15%;
+    line-height:1.3;
 }
-.time{
-    width: 40%;
-}
+
 #waiting-time{
-    font-size: 92px;
+    font-size: 180px;
 }
-.timeline {
+#timeline {
   position: relative;
-  width: 50%;
-  padding-left: 20px;
+  width: 85vw;
 }
 
 .timeline-item {
-  width: 80%;
+  width: 100%;
   border-right-width: 5px;
   border-right-style: solid;
   position: relative;
@@ -223,14 +268,38 @@
   justify-content: right;
 }
 
-.event-dot {
+.event-dot-black {
   position: absolute;
-  right: -12px;
-  top: 0;
-  width: 20px;
-  height: 20px;
+  right: -17px;
+  top: 15px;
+  width: 30px;
+  height: 30px;
   background-color: black;
+  border-style:solid;
+  border-color: black;
+  border-width:5px;
   border-radius: 50%;
+}
+.event-dot-white {
+  position: absolute;
+  right: -17px;
+  top: 15px;
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border-style:solid;
+  border-color: black;
+  border-width:5px;
+  border-radius: 50%;
+}
+#last-dot{
+    width:46px;
+    height:46px;
+    right:-23px;
+    top:0px;
+}
+#first-dot{
+    top:0px;
 }
 
 .event-content {
@@ -252,6 +321,9 @@
 #content{
     padding-top: 10%;
     padding-bottom: 100px;
+}
+#last{
+    border-style:none;
 }
 
 </style>
