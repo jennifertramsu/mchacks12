@@ -1,9 +1,9 @@
 package mchacks.mchacks.model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-import mchacks.mchacks.model.Patient;
-
+@Entity
 public class Player
 {
 
@@ -14,7 +14,7 @@ public class Player
   //Player Attributes
   private int score;
   @Id
-  private String patient_id;
+  private String id;
 
   //------------------------
   // CONSTRUCTOR
@@ -23,7 +23,7 @@ public class Player
   public Player(int aScore, Patient patient)
   {
     score = aScore;
-    patient_id = patient.getId();
+    id = patient.getId();
   }
 
   //------------------------
@@ -45,7 +45,7 @@ public class Player
 
   public String getPatient_id()
   {
-    return patient_id;
+    return id;
   }
 
   public void delete()
