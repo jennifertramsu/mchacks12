@@ -1,10 +1,9 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
+package mchacks.mchacks.model;
 
+import jakarta.persistence.Id;
 
+import mchacks.mchacks.model.Patient;
 
-// line 2 "model.ump"
-// line 31 "model.ump"
 public class Player
 {
 
@@ -14,16 +13,17 @@ public class Player
 
   //Player Attributes
   private int score;
+  @Id
   private String patient_id;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Player(int aScore, String aPatient_id)
+  public Player(int aScore, Patient patient)
   {
     score = aScore;
-    patient_id = aPatient_id;
+    patient_id = patient.getId();
   }
 
   //------------------------
@@ -34,14 +34,6 @@ public class Player
   {
     boolean wasSet = false;
     score = aScore;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setPatient_id(String aPatient_id)
-  {
-    boolean wasSet = false;
-    patient_id = aPatient_id;
     wasSet = true;
     return wasSet;
   }

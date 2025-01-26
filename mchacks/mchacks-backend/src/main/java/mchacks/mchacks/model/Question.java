@@ -1,10 +1,16 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.35.0.7523.c616a4dce modeling language!*/
+package mchacks.mchacks.model;
 
+import java.util.*;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 // line 7 "model.ump"
-// line 36 "model.ump"
+// line 31 "model.ump"
+@Entity
 public class Question
 {
 
@@ -13,12 +19,17 @@ public class Question
   //------------------------
 
   //Question Attributes
+  @Id
+  @GeneratedValue
   private int id;
   private String text;
   private int points;
 
   //Question Associations
+  @OneToOne
   private Answer correct;
+  @OneToMany
+  private List<Answer> bank;
 
   //------------------------
   // CONSTRUCTOR
@@ -29,19 +40,17 @@ public class Question
     id = aId;
     text = aText;
     points = aPoints;
-    if (aCorrect == null || aCorrect.getQuestion() != null)
-    {
-      throw new RuntimeException("Unable to create Question due to aCorrect. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
     correct = aCorrect;
+    bank = new ArrayList<Answer>();
   }
 
-  public Question(int aId, String aText, int aPoints, int aIdForCorrect, String aTextForCorrect, AnswerBank aAnswerBankForCorrect)
+  public Question(int aId, String aText, int aPoints, int aIdForCorrect, String aTextForCorrect, Question aIncorrectForCorrect)
   {
     id = aId;
     text = aText;
     points = aPoints;
-    correct = new Answer(aIdForCorrect, aTextForCorrect, this, aAnswerBankForCorrect);
+    correct = new Answer(aIdForCorrect, aTextForCorrect);
+    bank = new ArrayList<Answer>();
   }
 
   //------------------------
@@ -91,6 +100,99 @@ public class Question
   {
     return correct;
   }
+  /* Code from template association_GetMany */
+  public Answer getBank(int index)
+  {
+    Answer aBank = bank.get(index);
+    return aBank;
+  }
+
+  public List<Answer> getBank()
+  {
+    List<Answer> newBank = Collections.unmodifiableList(bank);
+    return newBank;
+  }
+
+  public int numberOfBank()
+  {
+    int number = bank.size();
+    return number;
+  }
+
+  public boolean hasBank()
+  {
+    boolean has = bank.size() > 0;
+    return has;
+  }
+
+  public int indexOfBank(Answer aBank)
+  {
+    int index = bank.indexOf(aBank);
+    return index;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfBank()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToOne */
+  public Answer addBank(int aId, String aText, Question aCorrect)
+  {
+    return new Answer(aId, aText);
+  }
+
+  public boolean addBank(Answer aBank)
+  {
+    boolean wasAdded = false;
+    if (bank.contains(aBank)) { return false; }
+    bank.add(aBank);
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeBank(Answer aBank)
+  {
+    boolean wasRemoved = false;
+    //Unable to remove aBank, as it must always have a incorrect
+    if (bank.contains(aBank))
+    {
+      bank.remove(aBank);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addBankAt(Answer aBank, int index)
+  {  
+    boolean wasAdded = false;
+    if(addBank(aBank))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfBank()) { index = numberOfBank() - 1; }
+      bank.remove(aBank);
+      bank.add(index, aBank);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveBankAt(Answer aBank, int index)
+  {
+    boolean wasAdded = false;
+    if(bank.contains(aBank))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfBank()) { index = numberOfBank() - 1; }
+      bank.remove(aBank);
+      bank.add(index, aBank);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addBankAt(aBank, index);
+    }
+    return wasAdded;
+  }
 
   public void delete()
   {
@@ -100,8 +202,12 @@ public class Question
     {
       existingCorrect.delete();
     }
+    for(int i=bank.size(); i > 0; i--)
+    {
+      Answer aBank = bank.get(i - 1);
+      aBank.delete();
+    }
   }
-
 
   public String toString()
   {
