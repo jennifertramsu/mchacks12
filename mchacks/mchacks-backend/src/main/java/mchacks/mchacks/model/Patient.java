@@ -34,9 +34,6 @@ public class Patient
   private int globalPosition;
   private int categoryPosition;
 
-  //Patient Associations
-  @ManyToOne
-  private ERQueue eRQueue;
   @OneToMany
   private List<Investigation> investigations;
 
@@ -44,7 +41,7 @@ public class Patient
   // CONSTRUCTOR
   //------------------------
 
-  public Patient(String aId, LocalDate aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, int aGlobalPosition, int aCategoryPosition, ERQueue aERQueue)
+  public Patient(String aId, LocalDate aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, int aGlobalPosition, int aCategoryPosition)
   {
     arrival_time = aArrival_time;
     time_elapsed = aTime_elapsed;
@@ -55,11 +52,6 @@ public class Patient
     if (!setId(aId))
     {
       throw new RuntimeException("Cannot create due to duplicate id. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
-    boolean didAddERQueue = setERQueue(aERQueue);
-    if (!didAddERQueue)
-    {
-      throw new RuntimeException("Unable to create patient due to eRQueue. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     investigations = new ArrayList<Investigation>();
   }
@@ -179,11 +171,7 @@ public class Patient
   {
     return categoryPosition;
   }
-  /* Code from template association_GetOne */
-  public ERQueue getERQueue()
-  {
-    return eRQueue;
-  }
+
   /* Code from template association_GetMany */
   public Investigation getInvestigation(int index)
   {
@@ -213,25 +201,6 @@ public class Patient
   {
     int index = investigations.indexOf(aInvestigation);
     return index;
-  }
-  /* Code from template association_SetOneToMany */
-  public boolean setERQueue(ERQueue aERQueue)
-  {
-    boolean wasSet = false;
-    if (aERQueue == null)
-    {
-      return wasSet;
-    }
-
-    ERQueue existingERQueue = eRQueue;
-    eRQueue = aERQueue;
-    if (existingERQueue != null && !existingERQueue.equals(aERQueue))
-    {
-      existingERQueue.removePatient(this);
-    }
-    eRQueue.addPatient(this);
-    wasSet = true;
-    return wasSet;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfInvestigations()
@@ -304,12 +273,6 @@ public class Patient
   public void delete()
   {
     patientsById.remove(getId());
-    ERQueue placeholderERQueue = eRQueue;
-    this.eRQueue = null;
-    if(placeholderERQueue != null)
-    {
-      placeholderERQueue.removePatient(this);
-    }
     for(int i=investigations.size(); i > 0; i--)
     {
       Investigation aInvestigation = investigations.get(i - 1);
@@ -327,7 +290,6 @@ public class Patient
             "phase" + ":" + getPhase()+ "," +
             "globalPosition" + ":" + getGlobalPosition()+ "," +
             "categoryPosition" + ":" + getCategoryPosition()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "arrival_time" + "=" + (getArrival_time() != null ? !getArrival_time().equals(this)  ? getArrival_time().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "eRQueue = "+(getERQueue()!=null?Integer.toHexString(System.identityHashCode(getERQueue())):"null");
+            "  " + "arrival_time" + "=" + (getArrival_time() != null ? !getArrival_time().equals(this)  ? getArrival_time().toString().replaceAll("  ","    ") : "this" : "null");
   }
 }

@@ -1,15 +1,21 @@
 package mchacks.mchacks.dto;
 
 public class AnswerRequestDTO {
+    private int id;
     private String answer;
     private boolean correct;
 
     public AnswerRequestDTO() {
     }
 
-    public AnswerRequestDTO(String answer, boolean correct) {
+    public AnswerRequestDTO(int id, String answer, boolean correct) {
+        this.id = id;
         this.answer = answer;
         this.correct = correct;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getAnswer() {

@@ -5,7 +5,6 @@ import java.util.*;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 
@@ -255,23 +254,14 @@ public class ERQueue
   /* Code from template association_AddManyToOne */
   public Patient addPatient(String aId, LocalDate aArrival_time, int aTime_elapsed, String aTriage_category, String aPhase, int aGlobalPosition, int aCategoryPosition)
   {
-    return new Patient(aId, aArrival_time, aTime_elapsed, aTriage_category, aPhase, aGlobalPosition, aCategoryPosition, this);
+    return new Patient(aId, aArrival_time, aTime_elapsed, aTriage_category, aPhase, aGlobalPosition, aCategoryPosition);
   }
 
   public boolean addPatient(Patient aPatient)
   {
     boolean wasAdded = false;
     if (patients.contains(aPatient)) { return false; }
-    ERQueue existingERQueue = aPatient.getERQueue();
-    boolean isNewERQueue = existingERQueue != null && !this.equals(existingERQueue);
-    if (isNewERQueue)
-    {
-      aPatient.setERQueue(this);
-    }
-    else
-    {
-      patients.add(aPatient);
-    }
+    this.addPatient(aPatient);
     wasAdded = true;
     return wasAdded;
   }
@@ -280,11 +270,7 @@ public class ERQueue
   {
     boolean wasRemoved = false;
     //Unable to remove aPatient, as it must always have a eRQueue
-    if (!this.equals(aPatient.getERQueue()))
-    {
-      patients.remove(aPatient);
-      wasRemoved = true;
-    }
+    this.removePatient(aPatient);
     return wasRemoved;
   }
   /* Code from template association_AddIndexControlFunctions */
