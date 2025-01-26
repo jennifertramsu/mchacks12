@@ -35,21 +35,17 @@ public class Question
   // CONSTRUCTOR
   //------------------------
 
-  public Question(int aId, String aText, int aPoints, Answer aCorrect)
+  public Question()
   {
-    id = aId;
-    text = aText;
-    points = aPoints;
-    correct = aCorrect;
+    text = "";
+    points = 0;
     bank = new ArrayList<Answer>();
   }
 
-  public Question(int aId, String aText, int aPoints, int aIdForCorrect, String aTextForCorrect, Question aIncorrectForCorrect)
+  public Question(String aText, int aPoints)
   {
-    id = aId;
     text = aText;
     points = aPoints;
-    correct = new Answer(aIdForCorrect, aTextForCorrect);
     bank = new ArrayList<Answer>();
   }
 
@@ -95,6 +91,11 @@ public class Question
   {
     return points;
   }
+
+  public void setCorrect(Answer aCorrect)
+  {
+    correct = aCorrect;
+  }
   /* Code from template association_GetOne */
   public Answer getCorrect()
   {
@@ -134,11 +135,6 @@ public class Question
   public static int minimumNumberOfBank()
   {
     return 0;
-  }
-  /* Code from template association_AddManyToOne */
-  public Answer addBank(int aId, String aText, Question aCorrect)
-  {
-    return new Answer(aId, aText);
   }
 
   public boolean addBank(Answer aBank)

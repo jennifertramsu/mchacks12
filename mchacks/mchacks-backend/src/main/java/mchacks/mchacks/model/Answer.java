@@ -3,8 +3,6 @@ package mchacks.mchacks.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 
 @Entity
 public class Answer
@@ -24,15 +22,11 @@ public class Answer
   // CONSTRUCTOR
   //------------------------
 
-  public Answer(int aId, String aText)
-  {
-    id = aId;
-    text = aText;
-  }
+  public Answer()
+  {}
 
-  public Answer(int aId, String aText, int aIdForCorrect, String aTextForCorrect, int aPointsForCorrect, Question aIncorrect)
+  public Answer(String aText)
   {
-    id = aId;
     text = aText;
   }
 

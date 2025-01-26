@@ -14,4 +14,7 @@ public interface QuestionDao extends CrudRepository<Question, Integer> {
 
     // Get question by id
     Question getQuestionById(int id);
+
+    // Get all
+    List<Question> findAll();
 }

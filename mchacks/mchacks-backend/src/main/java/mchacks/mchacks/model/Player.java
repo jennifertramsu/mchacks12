@@ -20,9 +20,9 @@ public class Player
   // CONSTRUCTOR
   //------------------------
 
-  public Player(int aScore, Patient patient)
+  public Player(Patient patient)
   {
-    score = aScore;
+    score = 0;
     id = patient.getId();
   }
 

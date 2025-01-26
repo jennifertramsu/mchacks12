@@ -20,7 +20,17 @@ public class QuestionService {
     }
 
     @Transactional
-    public Question getQuestion() {
+    public Question getQuestion(int id) {
+        return questionDao.getQuestionById(id);
+    }
+
+    @Transactional
+    public List<Question> getAllQuestions() {
+        return questionDao.findAll();
+    }
+
+    @Transactional
+    public Question getRandomQuestion() {
         // Retrieve list of all question ids
         List<Integer> questionIds = questionDao.getAllQuestionIds();
         
@@ -33,18 +43,8 @@ public class QuestionService {
     }
 
     @Transactional
-    public void addQuestion(Question question) {
-        questionDao.save(question);
-    }
-
-    @Transactional
     public void deleteQuestion(int id) {
         questionDao.deleteById(id);
-    }
-
-    @Transactional
-    public void updateQuestion(Question question) {
-        questionDao.save(question);
     }
 
     @Transactional
@@ -68,7 +68,25 @@ public class QuestionService {
             answers.set(i, answers.get(randomIndex));
             answers.set(randomIndex, temp);
         }
-
         return answers;
+    }
+
+    @Transactional
+    public Question createQuestion(String text, int points) {
+        return questionDao.save(new Question(text, points));
+    }
+
+    @Transactional 
+    public Answer createAnswer(int q_id, String text, boolean correct) {
+        Answer a = new Answer(text);
+        Question q = questionDao.getQuestionById(q_id);
+
+        if (correct) {
+            q.setCorrect(a);
+        } else {
+            q.addBank(a);
+        }
+        questionDao.save(q);
+        return a;
     }
 }
