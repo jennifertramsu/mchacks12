@@ -1,32 +1,85 @@
 <template>
 <div id ='game'>
     <div id="Top-bar">
-        <button @click = "goToHome"> Back </button>
+        <button @click = "goToHome" id ="nav"> Back </button>
         <div id = 'points'> Points: {{ }}</div>
     </div>
     <div id="Question">
-        What is the meaning of life? 
+        {{this.question.question}}
     </div>
     <div id = "Answers">
-        <div class ="answer"> Happy </div>
-        <div class ="answer"> Hell </div>
-        <div class ="answer"> Cats </div>
-        <div class ="answer"> Calculating the Jacobian</div>
     </div>
     </div>
 </template>
 
 <script>
+// to do: change path from config + send api + points
+import axios from 'axios';
+var config = require('../../config')
+
+var frontendUrl = 'http://' + config.dev.host + ':' + config.dev.port
+var backendUrl = 'http://' + config.dev.backendHost + ':' + config.dev.backendPort
+
+var AXIOS = axios.create({
+  baseURL: backendUrl,
+  headers: { 'Access-Control-Allow-Origin': frontendUrl }
+})
     export default{
+        data(){
+            return{
+                answers: [],
+                question: '',
+            }
+
+        },
+        mounted(){
+            this.loadQuestion();
+            this.loadAnswers();
+        },
+
         methods:{
             goToHome(){
                 this.$router.push('/');
+            },
+            async loadQuestion(){
+                const response = await AXIOS.get('./quiz/questions/random');
+                this.question = response.data;
+            },
+            async loadAnswers(){ 
+                response = await AXIOS.get('./quiz/questions/{this.question.id}/submission');
+                this.answers = response.data;
+                
+                const answerContainer = document.getElementById("Answers");
+                this.answers.forEach(answer=>{
+                    const button = document.createElement('button');
+                    button.textContent = answer.text;
+                    button.id = answer.id;
+                    button.addEventListener('click',()=>{
+                        console.log("click!",button.id);
+                        this.sendAnswer(button.id);
+                    })
+                    answerContainer.appendChild(button);
+                })
+
+            },
+            sendAnswer(id){
+                submission.player_id ='anon_5679';
+                submission.question_Id = this.question.id;
+                submission.answer_Id = id;
+                AXIOS.post('./',submission);
+                this.loadQuestion();
+                this.loadAnswers();
+
             }
         }
     }
 </script>
 
 <style>
+#nav{
+    background-color: none;
+    border-style:none;
+}
 #Top-bar{
     height:fit-content;
     display:flex;
@@ -43,7 +96,7 @@
     column-gap: 20px;
     row-gap:20px;
 }
-#Question{
+.button{
     height:30vh;
     display:flex;
     justify-content:center;
